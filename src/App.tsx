@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback, useEffect, ReactNode } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import type { ReactNode } from "react";
 import {
   FileText,
   Save,
@@ -72,7 +73,7 @@ export default function Notepad() {
   const [wordCount, setWordCount] = useState<number>(3);
   const [charCount, setCharCount] = useState<number>(0);
   const [saved, setSaved] = useState<boolean>(true);
-  const [undoIndex, setUndoIndex] = useState<number>(0);
+  const [, setUndoIndex] = useState<number>(0);
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [cursorPos, setCursorPos] = useState<CursorPos>({ line: 1, col: 1 });
 
