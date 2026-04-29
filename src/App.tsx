@@ -40,7 +40,6 @@ interface BtnProps {
   children: ReactNode;
   isDark: boolean;
   border: string;
-  accent: string;
   textPrimary: string;
 }
 
@@ -61,26 +60,23 @@ function makeTab(fileName = "untitled.txt", content = ""): Tab {
 
 // ─── Btn component ────────────────────────────────────────────────────────────
 
-function Btn({ onClick, title, active = false, children, isDark, border, accent, textPrimary }: BtnProps) {
+function Btn({ onClick, title, active = false, children, isDark, border, textPrimary }: BtnProps) {
   return (
     <button
       onClick={onClick}
       title={title}
+      className={`jot-btn${active ? " jot-btn-active" : ""}${isDark ? " jot-dark" : " jot-light"}`}
       style={{
         display: "flex",
         alignItems: "center",
         gap: "5px",
         padding: "5px 9px",
-        background: active ? (isDark ? "#3a2a22" : "#f0ddd5") : "transparent",
-        border: `1px solid ${active ? accent : border}`,
+        border: `1px solid ${active ? textPrimary : border}`,
         borderRadius: "6px",
         cursor: "pointer",
         fontSize: "12px",
-        color: active ? accent : textPrimary,
-        transition: "background 0.12s",
+        color: textPrimary,
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.background = isDark ? "#2e2e2e" : "#e8e4de")}
-      onMouseLeave={(e) => (e.currentTarget.style.background = active ? (isDark ? "#3a2a22" : "#f0ddd5") : "transparent")}
     >
       {children}
     </button>
@@ -92,7 +88,7 @@ function Btn({ onClick, title, active = false, children, isDark, border, accent,
 export default function Notepad() {
   const [tabs, setTabs] = useState<Tab[]>([makeTab()]);
   const [activeId, setActiveId] = useState<string>(tabs[0].id);
-  const [isDark, setIsDark] = useState<boolean>(false);
+  const [isDark, setIsDark] = useState<boolean>(true);
   const [fontSize, setFontSize] = useState<number>(14);
   const [wordWrap, setWordWrap] = useState<boolean>(true);
   const [showSearch, setShowSearch] = useState<boolean>(false);
@@ -305,18 +301,17 @@ export default function Notepad() {
 
   // ── Theme ─────────────────────────────────────────────────────────────────────
 
-  const bg          = isDark ? "#1a1a1a" : "#f8f7f4";
-  const surface     = isDark ? "#242424" : "#ffffff";
-  const border      = isDark ? "#333"    : "#e2e0db";
-  const textPrimary = isDark ? "#e8e6e0" : "#1c1b18";
-  const textMuted   = isDark ? "#666"    : "#9b9890";
-  const accent      = "#d85a30";
-  const toolbarBg   = isDark ? "#1e1e1e" : "#f0ede8";
-  const tabBarBg    = isDark ? "#191919" : "#e8e5e0";
-  const tabActive   = isDark ? "#242424" : "#ffffff";
-  const tabInactive = isDark ? "#1e1e1e" : "#dedad4";
+  const bg          = isDark ? "#1a1a1a" : "#f5f5f5";
+  const surface     = isDark ? "#1e1e1e" : "#ffffff";
+  const border      = isDark ? "#2e2e2e" : "#e0e0e0";
+  const textPrimary = isDark ? "#d4d4d4" : "#1a1a1a";
+  const textMuted   = isDark ? "#555"    : "#999";
+  const toolbarBg   = isDark ? "#141414" : "#ebebeb";
+  const tabBarBg    = isDark ? "#111"    : "#e0e0e0";
+  const tabActive   = isDark ? "#1e1e1e" : "#ffffff";
+  const tabInactive = isDark ? "#161616" : "#d6d6d6";
 
-  const btnProps = { isDark, border, accent, textPrimary };
+  const btnProps = { isDark, border, textPrimary };
 
   const shortcuts = [
     "Ctrl+S — Save",
@@ -343,7 +338,7 @@ export default function Notepad() {
       {/* ── Toolbar ── */}
       <div style={{ background: toolbarBg, borderBottom: `1px solid ${border}`, padding: "8px 16px", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginRight: "6px" }}>
-          <FileText size={15} color={accent} />
+          <FileText size={15} color={textPrimary} />
           <span style={{ fontWeight: 600, fontSize: "13px" }}>Notepad</span>
         </div>
 
@@ -404,7 +399,7 @@ export default function Notepad() {
       {/* ── Tab Bar ── */}
       <div
         ref={tabBarRef}
-        style={{ background: tabBarBg, borderBottom: `1px solid ${border}`, display: "flex", alignItems: "flex-end", overflowX: "auto", scrollbarWidth: "none" }}
+        style={{ background: tabBarBg, borderBottom: `1px solid ${border}`, display: "flex", alignItems: "flex-end", overflow: "hidden" }}
       >
         {tabs.map((tab) => {
           const isActive = tab.id === activeId;
@@ -423,7 +418,7 @@ export default function Notepad() {
                 fontWeight: isActive ? 500 : 400,
                 color: isActive ? textPrimary : textMuted,
                 background: isActive ? tabActive : tabInactive,
-                borderTop: isActive ? `2px solid ${accent}` : "2px solid transparent",
+                borderTop: isActive ? `2px solid ${textPrimary}` : "2px solid transparent",
                 borderRight: `1px solid ${border}`,
                 borderBottom: isActive ? `1px solid ${tabActive}` : "none",
                 whiteSpace: "nowrap",
@@ -434,12 +429,12 @@ export default function Notepad() {
                 position: "relative",
                 marginBottom: isActive ? "-1px" : "0",
               }}
-              onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = isDark ? "#222" : "#e2deda"; }}
+              onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.background = isDark ? "#1c1c1c" : "#d0d0d0"; }}
               onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.background = tabInactive; }}
             >
               {/* Unsaved dot */}
               {!tab.saved && (
-                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: accent, flexShrink: 0 }} />
+                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: textMuted, flexShrink: 0 }} />
               )}
               <span style={{ overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}>{tab.fileName}</span>
               <button
@@ -478,12 +473,14 @@ export default function Notepad() {
             e.target.setSelectionRange(0, dot > 0 ? dot : e.target.value.length);
           }}
         />
-        <span style={{ fontSize: "11px", color: saved ? textMuted : accent, fontWeight: saved ? 400 : 500 }}>
+        <span style={{ fontSize: "11px", color: textMuted, fontWeight: 400 }}>
           {saved ? "Saved" : "Unsaved"}
         </span>
         <button
           onClick={handleSave}
-          style={{ display: "flex", alignItems: "center", gap: "4px", padding: "3px 9px", background: accent, border: "none", borderRadius: "5px", cursor: "pointer", fontSize: "11px", color: "#fff", fontWeight: 500 }}
+          style={{ display: "flex", alignItems: "center", gap: "4px", padding: "3px 9px", background: "transparent", border: `1px solid ${border}`, borderRadius: "5px", cursor: "pointer", fontSize: "11px", color: textPrimary, fontWeight: 500 }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = isDark ? "#2a2a2a" : "#e0e0e0")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
         >
           <Download size={11} /> Download
         </button>
@@ -511,7 +508,7 @@ export default function Notepad() {
               key={label}
               onClick={action}
               style={{ padding: "4px 10px", background: "transparent", border: `1px solid ${border}`, borderRadius: "6px", cursor: "pointer", fontSize: "12px", color: textPrimary }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = isDark ? "#333" : "#e8e4de")}
+              onMouseEnter={(e) => (e.currentTarget.style.background = isDark ? "#2a2a2a" : "#e0e0e0")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
             >{label}</button>
           ))}
@@ -553,7 +550,7 @@ export default function Notepad() {
             overflowY: "auto",
             boxSizing: "border-box",
             transition: "background 0.2s, color 0.2s, font-size 0.08s",
-            caretColor: accent,
+            caretColor: textPrimary,
           }}
         />
       </div>
@@ -571,9 +568,22 @@ export default function Notepad() {
         html, body, #root { width: 100%; height: 100%; min-height: 100vh; overflow: hidden; }
         body { overflow-y: auto; }
         @media (max-width: 580px) { .lbl { display: none; } }
-        textarea::selection { background: rgba(216,90,48,0.18); }
+        textarea::selection { background: rgba(${isDark ? "255,255,255,0.12" : "0,0,0,0.12"}); }
         textarea::placeholder { color: ${textMuted}; opacity: 1; }
-        div::-webkit-scrollbar { display: none; }
+
+        /* Button base */
+        .jot-btn { background: transparent; transition: background 0.12s; }
+        .jot-btn-active.jot-dark  { background: #2a2a2a; }
+        .jot-btn-active.jot-light { background: #e0e0e0; }
+        .jot-btn.jot-dark:hover   { background: #2a2a2a; }
+        .jot-btn.jot-light:hover  { background: #e0e0e0; }
+
+        /* Textarea scrollbar */
+        textarea::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-track { background: ${isDark ? "#1e1e1e" : "#f5f5f5"}; }
+        textarea::-webkit-scrollbar-thumb { background: ${isDark ? "#3a3a3a" : "#ccc"}; border-radius: 4px; }
+        textarea::-webkit-scrollbar-thumb:hover { background: ${isDark ? "#4a4a4a" : "#bbb"}; }
+        textarea { scrollbar-width: thin; scrollbar-color: ${isDark ? "#3a3a3a #1e1e1e" : "#ccc #f5f5f5"}; }
       `}</style>
     </div>
   );
